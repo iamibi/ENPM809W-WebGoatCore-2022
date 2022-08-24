@@ -1,92 +1,126 @@
 # WebGoat.NETCore
 
+## The next generation of the WebGoat example project to demonstrate OWASP TOP 10 vulnerabilities
 
+This is a re-implementation of the original [WebGoat project for .NET](https://github.com/rappayne/WebGoat.NET).
 
-## Getting started
+This web application is a learning platform that attempts to teach about
+common web security flaws. It contains generic security flaws that apply to
+most web applications. It also contains lessons that specifically pertain to
+the .NET framework. The exercises in this app are intended to teach about 
+web security attacks and how developers can overcome them.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+### WARNING: 
+THIS WEB APPLICATION CONTAINS NUMEROUS SECURITY VULNERABILITIES 
+WHICH WILL RENDER YOUR COMPUTER VERY INSECURE WHILE RUNNING! IT IS HIGHLY
+RECOMMENDED TO COMPLETELY DISCONNECT YOUR COMPUTER FROM ALL NETWORKS WHILE
+RUNNING!
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### Notes:
+ - Google Chrome performs filtering for reflected XSS attacks. These attacks
+   will not work unless chrome is run with the argument 
+   `--disable-xss-auditor`.
 
-## Add your files
+## How to build and run
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+### 1. Running in a Docker container
+
+The provided Dockerfile is compatible with both Linux and Windows containers.  
+To build a Docker image, execute the following command:
+
+```sh
+docker build --pull --rm -t webgoat .
+```
+
+#### Linux containers
+
+To run the `webgoat` image, execute the following command:
+
+```sh
+docker run -d -p 5000:80 --name webgoat webgoat
+```
+
+WebGoat.NETCore website should be accessible at http://localhost:5000.
+
+#### Windows containers
+
+To run `webgoat` image, execute the following command:
+
+```sh
+docker run --name webgoat webgoat
+```
+
+Windows containers do not support binding to localhost. To access the website, you need to provide the IP address of your Docker container. To obtain the IP, execute the following command:
+
+```sh
+docker exec webgoat ipconfig
+```
+The output will include the IP of the 'webgoat' container, for example:
 
 ```
-cd existing_repo
-git remote add origin https://code.umd.edu/iamibi/WebGoat.NETCore.git
-git branch -M main
-git push -uf origin main
+Ethernet adapter Ethernet:
+
+   Connection-specific DNS Suffix  . : 
+   Link-local IPv6 Address . . . . . : fe80::1967:6598:124:cfa3%4
+   IPv4 Address. . . . . . . . . . . : 172.29.245.43
+   Subnet Mask . . . . . . . . . . . : 255.255.240.0
+   Default Gateway . . . . . . . . . : 172.29.240.1
 ```
 
-## Integrate with your tools
+In the above example, you can access the WebGoat.NETCore website at http://172.29.245.43.
 
-- [ ] [Set up project integrations](https://code.umd.edu/iamibi/WebGoat.NETCore/-/settings/integrations)
+### 2. Run locally using dotnet.exe (Kestrel)
 
-## Collaborate with your team
+1. Build and publish WebGoat.NETCore with the following command:
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+```sh
+dotnet publish -c release -o ./app 
+```
 
-## Test and Deploy
+The web application will be deployed to the `app` folder in the current directory.
 
-Use the built-in continuous integration in GitLab.
+2. Execute the web application on localhost with the following command:
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+```sh
+dotnet ./app/WebGoatCore.dll --urls=http://localhost:5000
+```
 
-***
+The the WebGoat.NETCore website will be accessible at the URL specified with the `--urls` parameter: http://localhost:5000.
 
-# Editing this README
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+## Known issues:
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+1. The latest OWASP Top 10 is not covered. The uncovered vulnerabilities need to be added to the code base.
+2. Educational documents/trainings for any categories of the latest OWASP Top 10 are not available (the previous version of OWASP Top 10 is covered).
+3. The ClickJacking example is currently not functional.
+4. There are some raw SQL queries in the code. We should consider using EF Core instead.
+5. There is an exeption thrown after checkout if there are two exactly the same product entries in the cart.
+6. Sometimes there is only one featured product diplayed on main page (instead of four).
 
-## Name
-Choose a self-explaining name for your project.
+## Changelog:
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+### Initial version:
+- Converted WebGoat.NET (.NET Framework) to WebGoat.NETCore (.NET Core).
+- Updated a set of functionalities to be compatible with .NET Core:
+    - register/login/logout
+    - cart/checkout
+    - blog
+    - products management
+    - shipment tracking
+- Improved the site styles.
+- Added redirecting to the recent page after login.
+- Included exception data on error pages.
+- Improved spelling and formatting.
+- Improved the build process.
+- Fixed the 'Keep shopping' link.
+- Improved the error messages for required form fields.
+- Fixed the exception when no CCN was specified.
+- Fixed order value calculation on checkout.
+- Added support for running on Linux OS.
+- Replaced SQL Server Local DB with SQLite database.
+- Added support for running WebGoat in a Linux Docker container.
+- Improved formatting of prices (rounding + removed $ character for consistency)
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
