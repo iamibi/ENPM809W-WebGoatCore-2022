@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using WebGoatCore.ViewModels;
+using System.Text.RegularExpressions;
 
 namespace WebGoatCore.Controllers
 {
@@ -32,20 +33,36 @@ namespace WebGoatCore.Controllers
                 selectedCategoryId = null;
             }
 
-            var product = _productRepository.FindNonDiscontinuedProducts(nameFilter, selectedCategoryId)
+            Match match = null;
+
+            if (nameFilter != null)
+            {
+                string regex = "(([A-Za-z'])+.)+[A-Za-z]$";
+                Regex nameFilterRx = new Regex(regex);
+                match = nameFilterRx.Match(nameFilter);
+            }
+
+            if (nameFilter == null || (match != null && match.Success))
+            {
+                var product = _productRepository.FindNonDiscontinuedProducts(nameFilter, selectedCategoryId)
                 .Select(p => new ProductListViewModel.ProductItem()
                 {
                     Product = p,
                     ImageUrl = GetImageUrlForProduct(p),
                 });
 
-            return View(new ProductListViewModel()
+                return View(new ProductListViewModel()
+                {
+                    Products = product,
+                    ProductCategories = _categoryRepository.GetAllCategories(),
+                    SelectedCategoryId = selectedCategoryId,
+                    NameFilter = nameFilter
+                });
+            }
+            else
             {
-                Products = product,
-                ProductCategories = _categoryRepository.GetAllCategories(),
-                SelectedCategoryId = selectedCategoryId,
-                NameFilter = nameFilter
-            });
+                throw new FormatException("Invalid Name Passed");
+            }
         }
 
         [HttpGet("{productId}")]
