@@ -2,8 +2,6 @@
 
 ## The next generation of the WebGoat example project to demonstrate OWASP TOP 10 vulnerabilities
 
-This is a re-implementation of the original [WebGoat project for .NET](https://github.com/rappayne/WebGoat.NET).
-
 This web application is a learning platform that attempts to teach about
 common web security flaws. It contains generic security flaws that apply to
 most web applications. It also contains lessons that specifically pertain to
@@ -86,41 +84,3 @@ dotnet ./app/WebGoatCore.dll --urls=http://localhost:5000
 ```
 
 The the WebGoat.NETCore website will be accessible at the URL specified with the `--urls` parameter: http://localhost:5000.
-
-
-## Known issues:
-
-1. The latest OWASP Top 10 is not covered. The uncovered vulnerabilities need to be added to the code base.
-2. Educational documents/trainings for any categories of the latest OWASP Top 10 are not available (the previous version of OWASP Top 10 is covered).
-3. The ClickJacking example is currently not functional.
-4. There are some raw SQL queries in the code. We should consider using EF Core instead.
-5. There is an exeption thrown after checkout if there are two exactly the same product entries in the cart.
-6. Sometimes there is only one featured product diplayed on main page (instead of four).
-
-## Changelog:
-
-### Initial version:
-- Converted WebGoat.NET (.NET Framework) to WebGoat.NETCore (.NET Core).
-- Updated a set of functionalities to be compatible with .NET Core:
-    - register/login/logout
-    - cart/checkout
-    - blog
-    - products management
-    - shipment tracking
-- Improved the site styles.
-- Added redirecting to the recent page after login.
-- Included exception data on error pages.
-- Improved spelling and formatting.
-- Improved the build process.
-- Fixed the 'Keep shopping' link.
-- Improved the error messages for required form fields.
-- Fixed the exception when no CCN was specified.
-- Fixed order value calculation on checkout.
-- Added support for running on Linux OS.
-- Replaced SQL Server Local DB with SQLite database.
-- Added support for running WebGoat in a Linux Docker container.
-- Improved formatting of prices (rounding + removed $ character for consistency)
-
-
-
-
