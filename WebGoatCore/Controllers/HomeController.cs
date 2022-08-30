@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using WebGoatCore.ViewModels;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Threading.Tasks;
+using System;
 
 namespace WebGoatCore.Controllers
 {
@@ -25,7 +29,29 @@ namespace WebGoatCore.Controllers
             });
         }
 
+        [HttpGet]
         public IActionResult About() => View();
+
+        [HttpPost("About")]
+        public async Task<IActionResult> UploadFile(IFormFile FormFile)
+        {
+            ViewBag.Message = "";
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", FormFile.FileName);
+            try
+            {
+                using (var fileStream = new FileStream(path, FileMode.Create))
+                {
+                    await FormFile.CopyToAsync(fileStream);
+                }
+                ViewBag.Message = $"File {FormFile.FileName} Uploaded Successfully at /upload";
+                return View("About");
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel()
+                { ExceptionInfo = (IExceptionHandlerPathFeature)ex });
+            }
+        }
 
         [Authorize(Roles = "Admin")]
         public IActionResult Admin() => View();
