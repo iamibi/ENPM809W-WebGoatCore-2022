@@ -66,7 +66,7 @@ namespace WebGoatCore.Controllers
         }
 
         [HttpGet("{productId}")]
-        public IActionResult Details(int productId)
+        public IActionResult Details(int productId, [FromQuery(Name = "productName")] string productName = "")
         {
             var model = new ProductDetailsViewModel();
             try
@@ -75,6 +75,11 @@ namespace WebGoatCore.Controllers
                 model.Product = product;
                 model.CanAddToCart = true;
                 model.ProductImageUrl = GetImageUrlForProduct(product);
+
+                if (productName != "")
+                {
+                    ViewBag.Message = productName;
+                }
             }
             catch (InvalidOperationException)
             {
