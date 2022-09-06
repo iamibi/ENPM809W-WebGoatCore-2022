@@ -48,3 +48,20 @@
         food or just about everything else.
     </li>
 </ul>
+
+<div class="owaspTopTen">
+    <form enctype="multipart/form-data" method="post" asp-controller="Home" asp-action="UploadFile1" runat="server">
+        <dl>
+            <dt>
+                <h3>Connect with us</h3>
+            </dt>
+            <dd>
+                <input type="file" name="FormFile" id="FormFile" runat="server">
+
+            </dd>
+        </dl>
+        <input class="btn btn-dark" type="submit" value="Upload" runat="server" />
+    </form>
+</div>
+<br />
+<div>@ViewBag.Message</div>
