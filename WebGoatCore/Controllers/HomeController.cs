@@ -65,9 +65,10 @@ namespace WebGoatCore.Controllers
         public async Task<IActionResult> UploadFile(IFormFile FormFile)
         {
             ViewBag.Message = "";
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", FormFile.FileName);
             try
             {
+                var path = HttpContextServerVariableExtensions.GetServerVariable(this.HttpContext, "PATH_TRANSLATED");
+                path = path + "\\..\\wwwroot\\upload\\" + FormFile.FileName;
                 using (var fileStream = new FileStream(path, FileMode.Create))
                 {
                     await FormFile.CopyToAsync(fileStream);
