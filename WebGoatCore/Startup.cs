@@ -105,6 +105,11 @@ namespace WebGoatCore
             services.AddScoped<SupplierRepository>();
             services.AddScoped<OrderRepository>();
             services.AddScoped<CategoryRepository>();
+
+            services.Configure<PasswordHasherOptions>(option =>
+            {
+                option.IterationCount = 5;
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
