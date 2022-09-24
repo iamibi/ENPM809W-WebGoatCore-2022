@@ -108,6 +108,7 @@ namespace WebGoatCore
 
             services.Configure<PasswordHasherOptions>(option =>
             {
+                option.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2;
                 option.IterationCount = 5;
             });
         }
