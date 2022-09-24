@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.FileProviders;
-using WebGoatCore.Utils;
 
 namespace WebGoatCore
 {
@@ -106,7 +105,6 @@ namespace WebGoatCore
             services.AddScoped<SupplierRepository>();
             services.AddScoped<OrderRepository>();
             services.AddScoped<CategoryRepository>();
-            services.AddScoped<IPasswordHasher<IdentityUser>, SecurePasswordHasher<IdentityUser>>();
 
             services.Configure<PasswordHasherOptions>(option =>
             {
