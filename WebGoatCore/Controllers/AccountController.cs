@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using WebGoatCore.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using WebGoatCore.Utils;
 
 namespace WebGoatCore.Controllers
 {
@@ -17,6 +18,7 @@ namespace WebGoatCore.Controllers
         public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, CustomerRepository customerRepository)
         {
             _userManager = userManager;
+            _userManager.PasswordHasher = new SecurePasswordHasher<IdentityUser>();
             _signInManager = signInManager;
             _customerRepository = customerRepository;
         }
