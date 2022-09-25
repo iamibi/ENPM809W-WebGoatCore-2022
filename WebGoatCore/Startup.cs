@@ -106,6 +106,8 @@ namespace WebGoatCore
             services.AddScoped<OrderRepository>();
             services.AddScoped<CategoryRepository>();
 
+            // Set configurations for backward compatibility
+            // https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity-configuration?view=aspnetcore-3.1
             services.Configure<PasswordHasherOptions>(option =>
             {
                 option.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV2;
