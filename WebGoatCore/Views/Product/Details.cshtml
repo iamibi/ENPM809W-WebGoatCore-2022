@@ -16,6 +16,8 @@
         <div class="productDetail">
             <img src=@Model.ProductImageUrl alt=@Model.Product.ProductName>
             <br>
+            <h1>@Html.Raw(ViewBag.Message)</h1>
+            <br>
             @Model.Product.ProductName
             <br>
             Category: @(Model.Product.Category?.CategoryName ?? "No category")

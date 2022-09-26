@@ -21,9 +21,38 @@ namespace WebGoatCore.Controllers
             _productRepository = productRepository;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View(new HomeViewModel()
+            {
+                TopProducts = _productRepository.GetTopProducts(4)
+            });
+        }
+
+        [HttpPost("Index"), DisableRequestSizeLimit]
+        public IActionResult UploadFile1()
+        {
+            ViewBag.Message = "";
+            foreach (var formFile in Request.Form.Files)
+            {
+                if (formFile.Length > 0)
+                {
+                    using (var stream = formFile.OpenReadStream())
+                    {
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            string line = "";
+                            while (!reader.EndOfStream)
+                            {
+                                line += reader.ReadLine();
+                            }
+                            ViewBag.Message = $"Your details are: {line}";
+                        }
+                    }
+                }
+            }
+            return View("Index", new HomeViewModel()
             {
                 TopProducts = _productRepository.GetTopProducts(4)
             });
@@ -36,9 +65,10 @@ namespace WebGoatCore.Controllers
         public async Task<IActionResult> UploadFile(IFormFile FormFile)
         {
             ViewBag.Message = "";
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", FormFile.FileName);
             try
             {
+                var path = HttpContextServerVariableExtensions.GetServerVariable(this.HttpContext, "PATH_TRANSLATED");
+                path = path + "\\..\\wwwroot\\upload\\" + FormFile.FileName;
                 using (var fileStream = new FileStream(path, FileMode.Create))
                 {
                     await FormFile.CopyToAsync(fileStream);
