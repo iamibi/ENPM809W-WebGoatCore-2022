@@ -40,7 +40,10 @@ namespace WebGoatCore.Controllers
                 BlogEntryId = entryId,
                 ResponseDate = DateTime.Now
             };
-            _blogResponseRepository.CreateBlogResponse(response);
+            
+            var responseBack = _blogResponseRepository.CreateBlogResponse(response);
+
+            // TODO: Verify `responseBack`
 
             return RedirectToAction("Index");
         }
