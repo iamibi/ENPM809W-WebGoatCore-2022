@@ -105,6 +105,9 @@ namespace WebGoatCore
             services.AddScoped<SupplierRepository>();
             services.AddScoped<OrderRepository>();
             services.AddScoped<CategoryRepository>();
+
+            // TODO: Enable this to use Argon 2 as default hasher algorithm
+            // services.AddScoped<IPasswordHasher<IdentityUser>, Argon2Hasher<IdentityUser>>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
