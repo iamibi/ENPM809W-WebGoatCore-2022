@@ -13,6 +13,7 @@
     <a asp-action="Register">Register</a>
     if you don't have an account.
 </p>
+
 @using (Html.BeginForm(FormMethod.Post))
 {
     @Html.HiddenFor(m => m.ReturnUrl)
@@ -37,3 +38,9 @@
         <input type="submit" value="Log in" />
     </p>
 }
+
+<p>
+    <div class="form-group">
+        <a asp-action="ForgotPassword">Forgot Password</a>
+    </div>
+</p>

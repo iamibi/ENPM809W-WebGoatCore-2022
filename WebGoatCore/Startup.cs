@@ -52,7 +52,8 @@ namespace WebGoatCore
 
             services.AddDefaultIdentity<IdentityUser>()
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<NorthwindContext>();
+                .AddEntityFrameworkStores<NorthwindContext>()
+                .AddDefaultTokenProviders();
 
             services.Configure<IdentityOptions>(options =>
             {
@@ -72,6 +73,9 @@ namespace WebGoatCore
                 // User settings.
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
             });
+
+            // Set the duration of token expiry to 24hrs
+            services.Configure<DataProtectionTokenProviderOptions>(opt => opt.TokenLifespan = TimeSpan.FromHours(24));
 
             services.ConfigureApplicationCookie(options =>
             {
