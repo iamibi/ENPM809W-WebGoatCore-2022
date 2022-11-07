@@ -48,7 +48,7 @@ namespace WebGoatCore.Controllers
             });
         }
 
-        [HttpGet("{productId}")]
+        [HttpGet("{productId}"), HttpPost("{productId}")]
         public IActionResult Details(int productId)
         {
             var model = new ProductDetailsViewModel();
