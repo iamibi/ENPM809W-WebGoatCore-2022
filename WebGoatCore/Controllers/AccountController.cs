@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using WebGoatCore.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace WebGoatCore.Controllers
 {
@@ -13,12 +14,14 @@ namespace WebGoatCore.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly CustomerRepository _customerRepository;
+        private readonly ILogger _logger;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, CustomerRepository customerRepository)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, CustomerRepository customerRepository, ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _customerRepository = customerRepository;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -40,6 +43,9 @@ namespace WebGoatCore.Controllers
                 return View(model);
             }
 
+            string message = $"Sign in attempt by user {model.Username} with password {model.Password}";
+            _logger.LogInformation(message);
+
             var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, lockoutOnFailure: true);
 
             if (result.Succeeded)
@@ -56,6 +62,8 @@ namespace WebGoatCore.Controllers
 
             if (result.IsLockedOut)
             {
+                message = $"The user {model.Username} account is locked.";
+                _logger.LogWarning(message);
                 return RedirectToPage("./Lockout");
             }
             else
@@ -90,12 +98,18 @@ namespace WebGoatCore.Controllers
                     Email = model.Email
                 };
 
+                string message = $"Attempting to Register a user {model.Username}";
+                _logger.LogInformation(message);
+
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     _customerRepository.CreateCustomer(model.CompanyName, model.Username, model.Address, model.City, model.Region, model.PostalCode, model.Country);
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
+                    message = $"Successfully registered user {model.Username} with Address: {model.Address}, City: {model.City}, Region: {model.Region}, Postal Code: {model.PostalCode}, Country: {model.Country}";
+                    _logger.LogInformation(message);
+
                     return RedirectToAction("Index", "Home");
                 }
 

@@ -9,6 +9,7 @@ using WebGoatCore.ViewModels;
 using System.Linq;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace WebGoatCore.Controllers
 {
@@ -20,14 +21,16 @@ namespace WebGoatCore.Controllers
         private readonly OrderRepository _orderRepository;
         private CheckoutViewModel _model;
         private string _resourcePath;
+        private readonly ILogger _logger;
 
-        public CheckoutController(UserManager<IdentityUser> userManager, CustomerRepository customerRepository, IHostEnvironment hostEnvironment, IConfiguration configuration, ShipperRepository shipperRepository, OrderRepository orderRepository)
+        public CheckoutController(UserManager<IdentityUser> userManager, CustomerRepository customerRepository, IHostEnvironment hostEnvironment, IConfiguration configuration, ShipperRepository shipperRepository, OrderRepository orderRepository, ILogger<CheckoutController> logger)
         {
             _userManager = userManager;
             _customerRepository = customerRepository;
             _shipperRepository = shipperRepository;
             _orderRepository = orderRepository;
             _resourcePath = configuration.GetValue(Constants.WEBGOAT_ROOT, hostEnvironment.ContentRootPath);
+            _logger = logger;
         }
 
         [HttpGet]
@@ -56,6 +59,12 @@ namespace WebGoatCore.Controllers
             }
             catch (NullReferenceException)
             {
+                string message = "There was an error while getting the card.";
+                if (customer != null && creditCard != null)
+                {
+                    message += $" Card number: {creditCard.Number} for user: {customer.ContactName}";
+                }
+                _logger.LogWarning(message);
             }
 
             _model.Cart = HttpContext.Session.Get<Cart>("Cart");
@@ -160,6 +169,10 @@ namespace WebGoatCore.Controllers
 
             //Create the order itself.
             var orderId = _orderRepository.CreateOrder(order);
+
+            // Log the information for successfull order creation
+            string message = $"Order Creted with order ID: {orderId} for user: {customer.ContactName}";
+            _logger.LogInformation(message);
 
             //Create the payment record.
             _orderRepository.CreateOrderPayment(orderId, order.Total, creditCard.Number, creditCard.Expiry, approvalCode);
