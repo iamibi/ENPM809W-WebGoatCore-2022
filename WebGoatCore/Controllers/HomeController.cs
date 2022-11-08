@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace WebGoatCore.Controllers
 {
@@ -17,11 +18,13 @@ namespace WebGoatCore.Controllers
     {
         private readonly ProductRepository _productRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ILogger _logger;
 
-        public HomeController(IWebHostEnvironment webHostEnvironment, ProductRepository productRepository)
+        public HomeController(IWebHostEnvironment webHostEnvironment, ProductRepository productRepository, ILogger<HomeController> logger)
         {
             _webHostEnvironment = webHostEnvironment;
             _productRepository = productRepository;
+            _logger = logger;
         }
 
         public IActionResult Index()
@@ -81,6 +84,8 @@ namespace WebGoatCore.Controllers
             }
             catch (Exception ex)
             {
+                string message = $"Error occurred while reading the file. {ex.Message}";
+                _logger.LogError(ex, message);
                 ViewBag.Message = $"File processing failed: {ex.Message}";
             }
             return View("About");

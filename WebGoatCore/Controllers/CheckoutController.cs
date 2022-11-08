@@ -57,14 +57,14 @@ namespace WebGoatCore.Controllers
                 _model.ExpirationMonth = creditCard.Expiry.Month;
                 _model.ExpirationYear = creditCard.Expiry.Year;
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException null_ref)
             {
                 string message = "There was an error while getting the card.";
                 if (customer != null && creditCard != null)
                 {
                     message += $" Card number: {creditCard.Number} for user: {customer.ContactName}";
                 }
-                _logger.LogWarning(message);
+                _logger.LogWarning(null_ref, message);
             }
 
             _model.Cart = HttpContext.Session.Get<Cart>("Cart");
@@ -103,8 +103,14 @@ namespace WebGoatCore.Controllers
             {
                 creditCard.GetCardForUser();
             }
-            catch (NullReferenceException)
+            catch (NullReferenceException null_ref)
             {
+                string msg = "There was an error while getting the card.";
+                if (customer != null && creditCard != null)
+                {
+                    msg += $" Card number: {creditCard.Number} for user: {customer.ContactName}";
+                }
+                _logger.LogWarning(null_ref, msg);
             }
 
             //Get form of payment
@@ -201,8 +207,9 @@ namespace WebGoatCore.Controllers
             {
                 order = _orderRepository.GetOrderById(orderId.Value);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException invalid_op)
             {
+                _logger.LogError(invalid_op, $"Order {orderId} was not found.");
                 ModelState.AddModelError(string.Empty, string.Format("Order {0} was not found.", orderId));
                 return View();
             }

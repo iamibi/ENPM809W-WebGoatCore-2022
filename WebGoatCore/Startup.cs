@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
+using WebGoatCore.Utils;
 
 namespace WebGoatCore
 {
@@ -107,8 +109,16 @@ namespace WebGoatCore
             services.AddScoped<CategoryRepository>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            string pathToLog = Path.Combine(Directory.GetCurrentDirectory(), "logs");
+            if (Directory.Exists(pathToLog) == false)
+            {
+                Directory.CreateDirectory(pathToLog);
+            }
+
+            loggerFactory.AddFile(pathToLog);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
