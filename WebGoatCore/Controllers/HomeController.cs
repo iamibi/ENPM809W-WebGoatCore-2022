@@ -84,6 +84,7 @@ namespace WebGoatCore.Controllers
             }
             catch (Exception ex)
             {
+                // InvalidDataException is intended to be caught here
                 string message = $"Error occurred while reading the file. {ex.Message}";
                 _logger.LogError(ex, message);
                 ViewBag.Message = $"File processing failed: {ex.Message}";
