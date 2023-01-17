@@ -1,3 +1,5 @@
+# This repository is a clone of https://github.com/PeterMond/WebGoat.NETCore with changes made to make it more vulnerable for the ENPM809W Class of 2022. There were additional weaknesses introduced based on specific situations.
+
 # WebGoat.NETCore
 
 ## The next generation of the WebGoat example project to demonstrate OWASP TOP 10 vulnerabilities
